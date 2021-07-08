@@ -145,7 +145,7 @@
             <div class="e-gantt-parent-taskbar e-custom-parent" style="height:22px;border-radius:5px;text-overflow:ellipsis;">
                 @if (((context as TaskData).IsExpanded) == false)
                 {
-                    <span class="e-task-label" style="color:black;top:18px;font-size:9px;overflow: hidden;white-space: nowrap;">@((context as TaskData).Duration)</span>
+                    <span class="e-task-label" style="color:black;top:18px;font-size:9px;overflow: hidden;white-space: nowrap;">@((context as TaskData).Done)</span>
                 }
             </div>
         </ParentTaskbarTemplate>
@@ -293,6 +293,7 @@
         border-width: 0 0 1px !important;
     }
     .customtooltip.e-tooltip-wrap .e-tip-content {
+        top:16px;
         line-height: 20px;
     }
 
