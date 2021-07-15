@@ -145,7 +145,7 @@
             <div class="e-gantt-parent-taskbar e-custom-parent" style="height:22px;border-radius:5px;text-overflow:ellipsis;">
                 @if (((context as TaskData).IsExpanded) == false)
                 {
-                    <span class="e-task-label" style="color:black;top:18px;font-size:9px;overflow: hidden;white-space: nowrap;">@((context as TaskData).Done)</span>
+                    <span class="e-task-label" style="color:black;top:18px;font-size:9px;overflow: hidden;white-space: nowrap;">@totalHours((context as TaskData).TaskId)</span>
                 }
             </div>
         </ParentTaskbarTemplate>
@@ -390,6 +390,29 @@
     private bool IsWeekPrimary = true;
     private bool IsMonthPrimary = false;
     
+    private int totalHours(int id)
+    {
+        var tHours = 0;
+        foreach (IDictionary<string, object> kvp in Gantt.FlatData)
+        {
+            foreach (var key in kvp.Keys)
+            {
+                if (key == "ParentId")
+                {
+                    object value = null;
+                    var i = kvp.TryGetValue(key, out value);
+                    if(value != null && (int)value == id)
+                    {
+                        object duration = null;
+                        kvp.TryGetValue("Duration", out duration);
+                        tHours += Convert.ToInt32(duration);
+                    }
+                }
+            }
+        }
+        return tHours;
+    }
+
     protected override void OnInitialized()
     {
         this.TaskCollection = GetTaskCollection();
@@ -611,7 +634,7 @@
         TaskName = "Project estimation",
         StartDate = new DateTime(2019, 04, 02),
         EndDate = new DateTime(2019, 04, 21),
-        IsExpanded = true,
+        IsExpanded = false,
         Done = "Yes"
     },
     new TaskData() {
@@ -659,7 +682,7 @@
         Duration = "3",
         Progress = 30,
         ParentId = 9,
-        IsExpanded = true,
+        IsExpanded = false,
         Done = "Yes"
     },
     new TaskData() {
