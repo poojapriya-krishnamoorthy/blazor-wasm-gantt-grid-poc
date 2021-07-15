@@ -393,18 +393,18 @@
     private int totalHours(int id)
     {
         var tHours = 0;
-        foreach (IDictionary<string, object> kvp in Gantt.FlatData)
+        foreach (IDictionary<string, object> record in Gantt.FlatData)
         {
-            foreach (var key in kvp.Keys)
+            foreach (var key in record.Keys)
             {
                 if (key == "ParentId")
                 {
                     object value = null;
-                    var i = kvp.TryGetValue(key, out value);
+                    var i = record.TryGetValue(key, out value);
                     if(value != null && (int)value == id)
                     {
                         object duration = null;
-                        kvp.TryGetValue("Duration", out duration);
+                        record.TryGetValue("Duration", out duration);
                         tHours += Convert.ToInt32(duration);
                     }
                 }
