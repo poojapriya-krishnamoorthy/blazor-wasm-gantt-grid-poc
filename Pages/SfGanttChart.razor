@@ -425,10 +425,10 @@
         public string Text { get; set; }
     }
     private List<LevelFields> Levels = new List<LevelFields>() {
-        new LevelFields(){ ID= 0, Text= "Level 0" },
-        new LevelFields(){ ID= 1, Text= "Level 1" },
-        new LevelFields(){ ID= 2, Text= "Level 2" },
-        new LevelFields(){ ID= 3, Text= "Level 3" },
+        new LevelFields(){ ID= 0, Text= "Level 1" },
+        new LevelFields(){ ID= 1, Text= "Level 2" },
+        new LevelFields(){ ID= 2, Text= "Level 3" },
+        new LevelFields(){ ID= 3, Text= "Level 4" },
         new LevelFields(){ ID= 4 , Text= "Show all levels" },
      };
     public void OnChange(Syncfusion.Blazor.DropDowns.ChangeEventArgs<string, LevelFields> args)
@@ -487,7 +487,7 @@
     }
     public void CollapseAtLevel()
     {
-        this.Gantt.CollapseAtLevel(Level - 1);
+        this.Gantt.CollapseAtLevel(Level);
     }
     public void ExpandAtLevel()
     {
