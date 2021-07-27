@@ -2,11 +2,11 @@
 @using Syncfusion.Blazor.Grids
 @using Syncfusion.Blazor.Popups
 @using Syncfusion.Blazor.Buttons
-@inject IJSRuntime Runtime 
+
 
 <SfGrid @ref="Grid" DataSource="@GridData" Height="400" Width="800" AllowFiltering="true"
         GridLines="Syncfusion.Blazor.Grids.GridLine.Both" EnableVirtualization="true">
-    <GridEvents DataBound="DataBoundHanlder" QueryCellInfo="QueryCellInfo" TValue="Order"></GridEvents>
+    <GridEvents QueryCellInfo="QueryCellInfo" TValue="Order"></GridEvents>
     <GridAggregates>
         <GridAggregate>
             <GridAggregateColumns>
@@ -118,11 +118,6 @@
 
 <style>
 
-    /*to over come the styling issue once the summary position is changed*/
-    .e-grid .e-summarycontent {
-        overflow: unset;
-    }
-
     .e-grid.sf-grid .e-gridcontent .e-content.e-yscroll {
         overflow: hidden;
     }
@@ -206,10 +201,6 @@
     private bool IsVisible1 { get; set; } = false;
     string Content1 = "";
 
-    public void DataBoundHanlder()
-    {
-        Runtime.InvokeVoidAsync("SummaryPosition", Grid.ID,Grid.EnableVirtualization);
-    }
 
     public void QueryCellInfo(QueryCellInfoEventArgs<Order> args)
     {
