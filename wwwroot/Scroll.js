@@ -39,8 +39,8 @@ function StyleEventMarker(eventMarkers, projectStartDate, timelineCell, mode) {
             element = document.querySelectorAll(".e-timeline-header-table-container")[1].querySelector("th:nth-child(" + cellIndex + ")").children[0];
             
         } else if (mode == "Week") {
-            cellIndex = Math.ceil(left / (24 * 60 * 60 * 1000));
-            weekNumber = Math.ceil((new Date(eventMarker).getDay() + 1 + cellIndex) / 7);
+            cellIndex = Math.floor(left / (24 * 60 * 60 * 1000));
+            weekNumber = Math.floor((new Date(eventMarker).getDay() + 1 + cellIndex) / 7);
             dayPosition = ((weekNumber - 1) * timelineCell) + (timelineCell / (new Date(eventMarker).getDay() + 1));
             element = document.querySelectorAll(".e-timeline-header-table-container")[1].querySelector("th:nth-child(" + weekNumber + ")").children[0].children[0];
         }
