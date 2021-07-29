@@ -125,7 +125,7 @@
             <Template>
                 @{
                     var taskData = (context as TaskData);
-                    <SfTooltip Target=".nameColumn" CssClass="customtooltip" OnRender="OnRenderTooltip" Closed="tooltipHide" CloseDelay="500" ShowTipPointer=false OffsetX="@tooltipX" OffsetY=50 WindowCollision=true>
+                    <SfTooltip Target=".nameColumn" CssClass="customtooltip" OnRender="OnRenderTooltip" CloseDelay="500" ShowTipPointer=false OffsetX="@tooltipX" OffsetY=50 WindowCollision=true>
                         <TooltipTemplates>
                             <Content>
                                 <SfButton ID=".txt" IconCss="e-icons e-plus-icon" CssClass="e-round" IsPrimary="true" @onclick="PlusButtonClick"></SfButton>
@@ -583,6 +583,7 @@
         IsDayPrimary = true;
         IsWeekPrimary = false;
         IsMonthPrimary = false;
+        JSRuntime.InvokeAsync<string>("StyleEventMarker", Gantt.EventMarkers, Gantt.ProjectStartDate, Gantt.TimelineSettings.TimelineUnitSize, Gantt.TimelineSettings.BottomTier.Unit.ToString());
     }
     private void WeekModeClick(Microsoft.AspNetCore.Components.Web.MouseEventArgs args)
     {
@@ -592,6 +593,7 @@
         IsDayPrimary = false;
         IsWeekPrimary = true;
         IsMonthPrimary = false;
+        JSRuntime.InvokeAsync<string>("StyleEventMarker", Gantt.EventMarkers, Gantt.ProjectStartDate, Gantt.TimelineSettings.TimelineUnitSize, Gantt.TimelineSettings.BottomTier.Unit.ToString());
     }
     private void MonthModeClick(Microsoft.AspNetCore.Components.Web.MouseEventArgs args)
     {
