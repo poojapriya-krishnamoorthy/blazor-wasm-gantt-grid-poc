@@ -117,7 +117,7 @@
 <div hidden="@IsTopButtonHide" style ="float:right;margin-top:75px;margin-left:1139px;position:absolute;z-index:3;">
     <SfButton @ref="TopButton" IsToggle="true" IconCss="@TopIconCss" CssClass="e-round" @onclick="TopIconClicked" IsPrimary=true></SfButton>
 </div>
-<SfGantt DataSource="@TaskCollection" ProjectStartDate="new DateTime(2019,4,1)" ID="GanttChart" Width="1200px" Height="450px" ShowColumnChooser="true" @ref="Gantt" AllowRowDragAndDrop="true" HighlightWeekends="true" ContextMenuItems="@(new List<object>() { "TaskInformation","Indent","Outdent","DeleteTask"})" AllowReordering="true" TreeColumnIndex=1 RowHeight="RowsHeight" GridLines="Syncfusion.Blazor.Gantt.GridLine.None">
+<SfGantt DataSource="@TaskCollection" ProjectStartDate="new DateTime(2019,4,1)" ID="GanttChart" Width="1200px" Height="450px" @ref="Gantt" AllowRowDragAndDrop="true" HighlightWeekends="true" ContextMenuItems="@(new List<object>() { "TaskInformation","Indent","Outdent","DeleteTask"})" AllowReordering="true" TreeColumnIndex=1 RowHeight="RowsHeight" GridLines="Syncfusion.Blazor.Gantt.GridLine.None">
     <GanttTaskFields Id="TaskId" Name="TaskName" StartDate="StartDate" EndDate="EndDate" Duration="Duration" ParentID="ParentId" Dependency="Predecessor" ExpandState="IsExpanded"></GanttTaskFields>
     <GanttColumns>
         <GanttColumn Field="TaskId"></GanttColumn>
@@ -456,25 +456,25 @@
      };
     public void OpenChooser()
     {
-        Gantt.OpenColumnChooser(350, 70);
-        VisibleCols = Gantt.GetColumns();
-        VisibleCols = VisibleCols.Where(x => x.Visible).ToList();
+        //Gantt.OpenColumnChooser(350, 70);
+        //VisibleCols = Gantt.GetColumns();
+        //VisibleCols = VisibleCols.Where(x => x.Visible).ToList();
     }
     public async Task actionComplete(GanttActionEventArgs<TaskData> args)
     {
-        var currentColIndex = 2;
-        if (args.RequestType.ToString() == "ColumnState")
-        {
-            foreach (var a in args.VisibleColumns)
-            {
-                if (VisibleCols.Where(e => e.Field == a.Field).Count() == 0)
-                {
-                    currentColIndex = currentColIndex + 1;
-                    await Task.Delay(200);
-                    await Gantt.ReorderColumns(new List<string>() { a.Field }, "TaskName");
-                }
-            }
-        }
+        //var currentColIndex = 2;
+        //if (args.RequestType.ToString() == "ColumnState")
+        //{
+        //    foreach (var a in args.VisibleColumns)
+        //    {
+        //        if (VisibleCols.Where(e => e.Field == a.Field).Count() == 0)
+        //        {
+        //            currentColIndex = currentColIndex + 1;
+        //            await Task.Delay(200);
+        //            await Gantt.ReorderColumns(new List<string>() { a.Field }, "TaskName");
+        //        }
+        //    }
+        //}
     }
     public void OnChange(Syncfusion.Blazor.DropDowns.ChangeEventArgs<string, LevelFields> args)
     {
