@@ -570,7 +570,7 @@
         }
         return bottomString;
     }
-    private void DayModeClick(Microsoft.AspNetCore.Components.Web.MouseEventArgs args)
+    private async Task DayModeClick(Microsoft.AspNetCore.Components.Web.MouseEventArgs args)
     {
         TopTierUnit = TimelineViewMode.Week;
         BottomTierUnit = TimelineViewMode.Day;
@@ -578,9 +578,10 @@
         IsDayPrimary = true;
         IsWeekPrimary = false;
         IsMonthPrimary = false;
-        JSRuntime.InvokeAsync<string>("StyleEventMarker", Gantt.EventMarkers, Gantt.ProjectStartDate, Gantt.TimelineSettings.TimelineUnitSize, Gantt.TimelineSettings.BottomTier.Unit.ToString());
+        await Task.Delay(200);
+        JSRuntime.InvokeAsync<string>("StyleEventMarker", Gantt.EventMarkers, Gantt.ProjectStartDate, Gantt.TimelineSettings.TimelineUnitSize, BottomTierUnit.ToString());
     }
-    private void WeekModeClick(Microsoft.AspNetCore.Components.Web.MouseEventArgs args)
+    private async Task WeekModeClick(Microsoft.AspNetCore.Components.Web.MouseEventArgs args)
     {
         TopTierUnit = TimelineViewMode.Month;
         BottomTierUnit = TimelineViewMode.Week;
@@ -588,7 +589,8 @@
         IsDayPrimary = false;
         IsWeekPrimary = true;
         IsMonthPrimary = false;
-        JSRuntime.InvokeAsync<string>("StyleEventMarker", Gantt.EventMarkers, Gantt.ProjectStartDate, Gantt.TimelineSettings.TimelineUnitSize, Gantt.TimelineSettings.BottomTier.Unit.ToString());
+        await Task.Delay(200);
+        await JSRuntime.InvokeAsync<string>("StyleEventMarker", Gantt.EventMarkers, Gantt.ProjectStartDate, Gantt.TimelineSettings.TimelineUnitSize, BottomTierUnit.ToString());
     }
     private void MonthModeClick(Microsoft.AspNetCore.Components.Web.MouseEventArgs args)
     {
