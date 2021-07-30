@@ -2,6 +2,9 @@
 @inject IJSRuntime JSRuntime
 @using Syncfusion.Blazor.ProgressBar
 @using Syncfusion.Blazor.DropDowns
+@using Syncfusion.Blazor.TreeGrid
+@using Action = Syncfusion.Blazor.Grids.Action
+@inject IJSRuntime JSRuntime
 
 <table class="table">
     <tbody>
@@ -109,7 +112,7 @@
 <div hidden="@IsTopButtonHide" style ="float:right;margin-top:75px;margin-left:1139px;position:absolute;z-index:3;">
     <SfButton @ref="TopButton" IsToggle="true" IconCss="@TopIconCss" CssClass="e-round" @onclick="TopIconClicked" IsPrimary=true></SfButton>
 </div>
-<SfGantt DataSource="@TaskCollection" Width="1200px" Height="450px" @ref="Gantt" AllowRowDragAndDrop="true" HighlightWeekends="true" ContextMenuItems="@(new List<object>() { "TaskInformation","Indent","Outdent","DeleteTask"})" AllowReordering="true" ShowColumnMenu="true" TreeColumnIndex=1 RowHeight="RowsHeight" GridLines="Syncfusion.Blazor.Gantt.GridLine.None">
+<SfGantt DataSource="@TaskCollection" ProjectStartDate="new DateTime(2019,4,1)" ID="GanttChart" Width="1200px" Height="450px" @ref="Gantt" AllowRowDragAndDrop="true" HighlightWeekends="true" ContextMenuItems="@(new List<object>() { "TaskInformation","Indent","Outdent","DeleteTask"})" AllowReordering="true" TreeColumnIndex=1 RowHeight="RowsHeight" GridLines="Syncfusion.Blazor.Gantt.GridLine.None">
     <GanttTaskFields Id="TaskId" Name="TaskName" StartDate="StartDate" EndDate="EndDate" Duration="Duration" ParentID="ParentId" Dependency="Predecessor" ExpandState="IsExpanded"></GanttTaskFields>
     <GanttColumns>
         <GanttColumn Field="TaskId"></GanttColumn>
@@ -117,7 +120,7 @@
             <Template>
                 @{
                     var taskData = (context as TaskData);
-                    <SfTooltip Target="#txt" CssClass="customtooltip" CloseDelay="500" ShowTipPointer=false OffsetX=110 OffsetY=50 WindowCollision=true>
+                    <SfTooltip Target=".nameColumn" CssClass="customtooltip" OnRender="OnRenderTooltip" CloseDelay="500" ShowTipPointer=false OffsetX="@tooltipX" OffsetY=50 WindowCollision=true>
                         <TooltipTemplates>
                             <Content>
                                 <SfButton ID=".txt" IconCss="e-icons e-plus-icon" CssClass="e-round" IsPrimary="true" @onclick="PlusButtonClick"></SfButton>
@@ -203,7 +206,7 @@
 
         </TaskbarTemplate>
     </GanttTemplates>
-    <GanttEvents OnActionBegin= "ActionBeginEvent" BeforeTooltipRender="BeforeTooltipRender" QueryCellInfo="QueryCellInfo" TValue="TaskData"></GanttEvents>
+    <GanttEvents Created="created" SplitterResized="SplitterResized"  OnActionBegin="ActionBeginEvent" BeforeTooltipRender="BeforeTooltipRender" QueryCellInfo="QueryCellInfo" OnActionComplete="actionComplete" TValue="TaskData"></GanttEvents>
     <GanttEventMarkers>
         <GanttEventMarker Day="Event1" Label="Today"
                           CssClass="e-custom-event-marker"></GanttEventMarker>
@@ -314,7 +317,7 @@
         border-width: 0 0 1px !important;
     }
     .customtooltip.e-tooltip-wrap .e-tip-content {
-        top:16px;
+        top: 36px;
         line-height: 20px;
     }
 
@@ -397,10 +400,23 @@
         background-color: red;
         border-radius: 10px;
     }
+    .actionbtn {
+        display: none; /*initial hidden*/
+    }
+
+    .e-row:hover .e-rowcell .actionbtn {
+        display: block; /*Showing the action item while hovering*/
+    }
+
+    .e-attr {
+        position: absolute;
+        left: 850px;
+    } 
 </style>
 
 @code{
     public SfGantt<TaskData> Gantt;
+    public List<TreeGridColumn> columns;
     public SfButton TopButton;
     private bool IsTopButtonHide = false;
     private string TopIconCss = "e-icons e-top-icon";
@@ -419,6 +435,8 @@
     private bool IsDayPrimary = false;
     private bool IsWeekPrimary = true;
     private bool IsMonthPrimary = false;
+    private static int tooltipX { get; set; } = 0;
+    public List<TreeGridColumn> VisibleCols { get; set; }
     public class LevelFields
     {
         public double ID { get; set; }
@@ -431,16 +449,43 @@
         new LevelFields(){ ID= 3, Text= "Level 4" },
         new LevelFields(){ ID= 4 , Text= "Show all levels" },
      };
+    public void OpenChooser()
+    {
+        //Gantt.OpenColumnChooser(350, 70);
+        //VisibleCols = Gantt.GetColumns();
+        //VisibleCols = VisibleCols.Where(x => x.Visible).ToList();
+    }
+    public async Task actionComplete(GanttActionEventArgs<TaskData> args)
+    {
+        //var currentColIndex = 2;
+        //if (args.RequestType.ToString() == "ColumnState")
+        //{
+        //    foreach (var a in args.VisibleColumns)
+        //    {
+        //        if (VisibleCols.Where(e => e.Field == a.Field).Count() == 0)
+        //        {
+        //            currentColIndex = currentColIndex + 1;
+        //            await Task.Delay(200);
+        //            await Gantt.ReorderColumns(new List<string>() { a.Field }, "TaskName");
+        //        }
+        //    }
+        //}
+    }
     public void OnChange(Syncfusion.Blazor.DropDowns.ChangeEventArgs<string, LevelFields> args)
     {
         Level = (int)args.ItemData.ID;
-        if((int)args.ItemData.ID != 4)
+        if ((int)args.ItemData.ID != 4)
         {
             CollapseAtLevel();
-        } else
+        }
+        else
         {
             Gantt.ExpandAllAsync();
         }
+    }
+    private async Task SplitterResized()
+    {
+        await JSRuntime.InvokeAsync<string>("GetSplitPanePosition", 2, Gantt.ID, tooltipX);
     }
     private int totalHours(int id)
     {
@@ -533,6 +578,7 @@
         IsDayPrimary = true;
         IsWeekPrimary = false;
         IsMonthPrimary = false;
+        JSRuntime.InvokeAsync<string>("StyleEventMarker", Gantt.EventMarkers, Gantt.ProjectStartDate, Gantt.TimelineSettings.TimelineUnitSize, Gantt.TimelineSettings.BottomTier.Unit.ToString());
     }
     private void WeekModeClick(Microsoft.AspNetCore.Components.Web.MouseEventArgs args)
     {
@@ -542,6 +588,7 @@
         IsDayPrimary = false;
         IsWeekPrimary = true;
         IsMonthPrimary = false;
+        JSRuntime.InvokeAsync<string>("StyleEventMarker", Gantt.EventMarkers, Gantt.ProjectStartDate, Gantt.TimelineSettings.TimelineUnitSize, Gantt.TimelineSettings.BottomTier.Unit.ToString());
     }
     private void MonthModeClick(Microsoft.AspNetCore.Components.Web.MouseEventArgs args)
     {
@@ -623,6 +670,7 @@
                 args.Cell.AddClass(new string[] { "parent-bold" });   // customized only parent rows
                 args.Cell.AddClass(new string[] { "line" }); // customized to draw line for parent task name
             }
+            args.Cell.AddClass(new string[] { "nameColumn" });
         }
     }
     public void QueryChartRowInfo(Syncfusion.Blazor.Gantt.QueryChartRowInfoEventArgs<TaskData> args)
@@ -637,6 +685,35 @@
     public void ActionBeginEvent(GanttActionEventArgs<TaskData> args)
     {
         args.PredecessorOffSetValidation = true;
+    }
+
+    [JSInvokable]
+    public static void SetTooltipPosition(int tooltipPosition)
+    {
+        tooltipX = tooltipPosition;
+    }
+
+    public async Task OnRenderTooltip(TooltipEventArgs args)
+    {
+        var i = 0;
+    }
+    public async Task created()
+    {
+        //var index = Gantt.GetColumnIndexByField("TaskName");
+        await JSRuntime.InvokeAsync<string>("GetSplitPanePosition", 2, Gantt.ID, tooltipX);
+        await JSRuntime.InvokeAsync<string>("StyleEventMarker", Gantt.EventMarkers, Gantt.ProjectStartDate, Gantt.TimelineSettings.TimelineUnitSize, Gantt.TimelineSettings.BottomTier.Unit.ToString());
+        //tooltipX = x;
+        //columns = this.Gantt.Columns;
+        //await JSRuntime.InvokeAsync<string>("AddEvent");
+        //Type selectType = typeof(Component);
+        //RenderFragment = (builder) =>
+        //{
+        //    builder.OpenComponent(0, selectType);
+        //    builder.AddAttribute(1, "Columns", columns);
+        //    builder.AddAttribute(2, "GanttId", this.Gantt.ID);
+        //    builder.AddAttribute(3, "GanttInstance", this.Gantt);
+        //    builder.CloseComponent();
+        //};
     }
     public static List<TaskData> GetTaskCollection()
     {
